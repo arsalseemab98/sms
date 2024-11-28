@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bulk Upload Results</title>
+</head>
+<body>
+    <h1>Bulk Upload Results</h1>
+    <ul>
+        {% for phone_number, sid in results %}
+            <li>{{ phone_number }}: Message SID: {{ sid }}</li>
+        {% endfor %}
+    </ul>
+    <br>
+    <a href="/">Back</a>
+</body>
+</html>

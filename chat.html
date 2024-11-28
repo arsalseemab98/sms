@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with Contacts</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Chat with Contacts</h1>
+
+        <!-- Navigation buttons -->
+        <div class="mb-4 d-flex flex-wrap gap-2">
+            <a href="{{ url_for('chat') }}" class="btn btn-secondary">All Contacts</a>
+            <a href="{{ url_for('chat_unread') }}" class="btn btn-secondary">Unread Messages</a>
+            <a href="{{ url_for('history') }}" class="btn btn-secondary">Message History</a>
+            <a href="{{ url_for('blocked_contacts') }}" class="btn btn-secondary">Blocked Contacts</a>
+            <a href="/" class="btn btn-light">Back</a>
+        </div>
+
+        <!-- "Mark All as Read" button for unread messages view -->
+        {% if unread %}
+            <div class="mb-4">
+                <form action="{{ url_for('reset_unread_messages') }}" method="POST">
+                    <button type="submit" class="btn btn-warning">Mark All as Read</button>
+                </form>
+            </div>
+        {% endif %}
+
+        <!-- Contacts and Messages Display -->
+        <div>
+            {% for contact in contacts %}
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title">{{ contact.phone_number }}</h5>
+                            
+                            <!-- Block/Unblock button -->
+                            {% if contact.phone_number in blocked_numbers %}
+                                <form action="{{ url_for('unblock_number', phone_number=contact.phone_number) }}" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Unblock</button>
+                                </form>
+                            {% else %}
+                                <form action="{{ url_for('block_number', phone_number=contact.phone_number) }}" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-warning">Block</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                        
+                        <ul class="list-group mb-3">
+                            {% for msg in contact.messages | reverse %}
+                                <li class="list-group-item">
+                                    <strong>{{ "Received" if msg.direction == 'inbound' else "Sent" }}:</strong> {{ msg.body }}
+                                    <small class="text-muted d-block">{{ msg.date_sent }}</small>
+
+                                    {% if unread and msg.direction == 'inbound' %}
+                                        <!-- Mark as read button for unread messages -->
+                                        <form action="{{ url_for('mark_as_read', sid=msg.sid) }}" method="POST" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-outline-success">Mark as Read</button>
+                                        </form>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                        <!-- Reply form under the last message -->
+                        {% if contact.phone_number not in blocked_numbers %}
+                            <form action="{{ url_for('reply', phone_number=contact.phone_number) }}" method="POST" class="d-flex">
+                                <input type="text" name="reply_message" class="form-control me-2" placeholder="Type your reply" required>
+                                <button type="submit" class="btn btn-primary">Send Reply</button>
+                            </form>
+                        {% else %}
+                            <div class="text-danger mt-2">You have blocked this contact. Unblock to reply.</div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination Controls (Example) -->
+        <nav aria-label="Message pagination">
+            <ul class="pagination justify-content-center mt-4">
+                <li class="page-item {% if not prev_page %}disabled{% endif %}">
+                    <a class="page-link" href="?page={{ prev_page }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item {% if not next_page %}disabled{% endif %}">
+                    <a class="page-link" href="?page={{ next_page }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

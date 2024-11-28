@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send SMS Messages</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Send SMS Messages</h1>
+
+        <!-- Preview Manual Message -->
+        <h3>Preview Manual Message</h3>
+        <form action="{{ url_for('preview_manual') }}" method="POST">
+            <div class="mb-3">
+                <label for="phone_number" class="form-label">Phone Number:</label>
+                <input type="text" name="phone_number" id="phone_number" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="message_body" class="form-label">Message:</label>
+                <textarea name="message_body" id="message_body" class="form-control" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Preview Manual Message</button>
+        </form>
+
+        <hr>
+
+        <!-- Upload and Preview Bulk Messages -->
+        <h3>Choose Excel File: Upload and Preview Bulk Messages</h3>
+        <form action="{{ url_for('preview_bulk') }}" method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <input type="file" name="bulk_file" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Upload and Preview Bulk Messages</button>
+        </form>
+
+        <hr>
+
+        <!-- Navigation Links -->
+        <div class="mb-3">
+            <a href="{{ url_for('analytics') }}" class="btn btn-secondary">View Analytics</a>
+            <a href="{{ url_for('chat') }}" class="btn btn-secondary">View Chat Messages</a>
+            <a href="{{ url_for('chat') }}" class="btn btn-secondary">Unread Messages ({{ unread_count }})</a>
+            <a href="{{ url_for('cost_summary') }}" class="btn btn-secondary">View Cost Summary</a>
+        </div>
+
+        <!-- Reset 30-Day List Button -->
+        <hr>
+        <h3>Reset 30-Day List</h3>
+        <form action="{{ url_for('reset_30_days_list') }}" method="post">
+            <button type="submit" class="btn btn-danger">Reset 30-Day List</button>
+        </form>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="alert alert-info">
+                    <ul>
+                        {% for category, message in messages %}
+                            <li><strong>{{ category.capitalize() }}:</strong> {{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

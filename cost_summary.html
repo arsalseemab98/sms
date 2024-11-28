@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cost Summary</title>
+    <style>
+        .container {
+            max-width: 600px;
+            margin: auto;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .cost-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            font-size: 16px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .total {
+            font-weight: bold;
+            color: #007bff;
+            font-size: 18px;
+        }
+
+        .cost-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cost Summary</h1>
+
+        <div class="cost-item">
+            <span>SMS Outbound Cost:</span>
+            <span>${{ cost_data.sent_sms_cost | round(2) }}</span>
+        </div>
+        <div class="cost-item">
+            <span>SMS Inbound Cost:</span>
+            <span>${{ cost_data.received_sms_cost | round(2) }}</span>
+        </div>
+        <div class="cost-item">
+            <span>Phone Number Spend:</span>
+            <span>${{ cost_data.phone_number_spend | round(2) }}</span>
+        </div>
+        <div class="cost-item total">
+            <span>Total SMS Cost:</span>
+            <span>${{ cost_data.total_sms_cost | round(2) }}</span>
+        </div>
+        <div class="cost-item total">
+            <span>Total Cost to Date:</span>
+            <span>${{ cost_data.total_cost | round(2) }}</span>
+        </div>
+    </div>
+</body>
+</html>
